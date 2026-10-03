@@ -62,7 +62,7 @@ test('the public API stays simple: no films, audio, pulse bus, master beat or dr
 test('the README documents each component with a props table, the quick start, the one-paragraph how, and measured performance', () => {
   const md = read('README.md');
   for (const h of ['## Quick start', '## SettleText', '## SettleImage', '## SettleVector', '## SettleBackground', '## How it works, in one paragraph', '## Performance', '## Naming']) assert.ok(md.includes(h), h);
-  assert.match(md, /npm i settle-text/);
+  assert.match(md, /npm install github:triplesparkle\/settle-text/, 'the install line names its repository (lane REPOSPUSH)');
   assert.match(md, /\| prop \| default \| what it does \|/, 'a props table');
   assert.ok(!/\\(frac|sum|beta)|\$\$/.test(md), 'no equations in the README');
   assert.doesNotMatch(md, /[–—]/, 'no en or em dashes');
