@@ -20,11 +20,11 @@ scatters a little and settles back into the same words. No theory needed. Pass `
 ## Quick start
 
 ```sh
-npm install github:triplesparkle/settle-text
+npm install github:TripleSparkleAI/settle-text
 ```
 
-That installs it from its public repository, `github.com/triplesparkle/settle-text`, and settle-see from its own.
-Nothing is on the npm registry (PUBLISHING.md). To run its tests, clone it: `git clone https://github.com/triplesparkle/settle-text`,
+That installs it from its public repository, `github.com/TripleSparkleAI/settle-text`, and settle-see from its own.
+Nothing is on the npm registry (PUBLISHING.md). To run its tests, clone it: `git clone https://github.com/TripleSparkleAI/settle-text`,
 `cd settle-text`, `npm install && npm test`.
 
 ```jsx
@@ -546,6 +546,6 @@ settle-text/
   CHANGELOG.md
 ```
 
-The engine is settle-see, wrapped and never forked: its own repository is `github.com/triplesparkle/settle-see`
+The engine is settle-see, wrapped and never forked: its own repository is `github.com/TripleSparkleAI/settle-see`
 (public), and in the SETTLE research repository it is the sibling folder `../settle-see`, a `file:`
-dependency that the export turns into `github:triplesparkle/settle-see`.
+dependency that the export turns into `github:TripleSparkleAI/settle-see`.

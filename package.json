@@ -20,7 +20,7 @@
     "perf": "python3 tools/perf_check.py"
   },
   "dependencies": {
-    "settle-see": "github:triplesparkle/settle-see"
+    "settle-see": "github:TripleSparkleAI/settle-see"
   },
   "peerDependencies": {
     "react": ">=18",

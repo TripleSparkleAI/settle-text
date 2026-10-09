@@ -8,7 +8,7 @@ records the most recent run; replace it on the next one.
 - [ ] `package.json`: `name` is `settle-text`, `version` is the new version, `private` is `true`, `type` is
       `module`, `exports` are `.` (`./src/index.js`) and `./react` (`./react/index.js`), `sideEffects` is `false`.
 - [ ] `peerDependencies` are `react` and `react-dom` (`>=18`); the one dependency is `settle-see`
-      (`file:../settle-see` here; the export rewrites it to `github:triplesparkle/settle-see`).
+      (`file:../settle-see` here; the export rewrites it to `github:TripleSparkleAI/settle-see`).
 - [ ] `package-lock.json` carries the same version twice (top and `packages[""]`).
 - [ ] `files` lists only folders and files that exist; `npm pack --dry-run` shows no `dist/`, no `node_modules/`,
       no `.env`, nothing from the SETTLE site.
@@ -49,7 +49,7 @@ records the most recent run; replace it on the next one.
 
 - [ ] Commit, then `DEST_ROOT=<a folder outside this repository> bash SETTLE/tools/export_settle_repos.sh --only
       settle-see --only settle-text`. The scan reports no unreviewed hit, the export's `package.json` depends on
-      `github:triplesparkle/settle-see`, and it carries no lock.
+      `github:TripleSparkleAI/settle-see`, and it carries no lock.
 - [ ] In a scratch copy of that export, point `settle-see` at the exported `../settle-see` and run
       `npm install && npm test`: the suite passes outside this repository.
 - [ ] Pushing (`--push`) is a separate decision. The repositories go public at launch (`SETTLE/launch.sh`'s public step).
@@ -64,7 +64,7 @@ records the most recent run; replace it on the next one.
 | demo build | builds (vite 6.4.3) |
 | demo in Chromium | 1440 and 390 wide, and reduced motion: seven headings found by role, level and name; no console error; the chapter heading morphed; three links found by role and name, each as wide as its words (62, 97, 120 px); a settled link drew 0 frames a second at rest, 21 on hover and 28 on keyboard focus, and 0 for both under reduced motion |
 | performance | re-run in low power mode at a load of 265 on 18 cores: confounded, about twice the README's table, every shape claim held (still mode 0 frames in 5 s); the table was kept |
-| standalone export | settle-text: scan clean (0 secret, 0 dev-only hits), depends on `github:triplesparkle/settle-see`, no lock; outside the repository `npm install && npm test` 62 of 62 (before hover and SettleLink) and the demo builds with settle-see from `node_modules` |
+| standalone export | settle-text: scan clean (0 secret, 0 dev-only hits), depends on `github:TripleSparkleAI/settle-see`, no lock; outside the repository `npm install && npm test` 62 of 62 (before hover and SettleLink) and the demo builds with settle-see from `node_modules` |
 | settle-see export | STOPPED by the export's own scan: one unreviewed dev-only hit, the English word "arrival" in a comment in `src/radialeffects.js`; a false positive for the export script's owner to review |
 
 **Open, for the navigator:** nothing. The licence was ruled MIT on 2026-10-09 (section 1).
