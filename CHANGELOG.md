@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased (2026-10-10): the off-screen pause reads the last report (lane SDMCHATFADE)
+
+- **FIX.** `useOnScreen` (react/hooks.js) read only the FIRST entry of an IntersectionObserver batch. A batch may
+  carry several entries for one element, oldest first: after an in-app page change the SETTLE site's chat window
+  and its title got `[hidden, shown]` in one batch, believed themselves off screen, and stayed paused as the noise
+  they start from. The hook now reads the batch's LAST entry. No API change.
+
 ## 0.6.0 (2026-10-09)
 
 - **THE ACTIVE HAZE.** Every piece of text re-settles on its own rotation again: on its turn the heat climbs over

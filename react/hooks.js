@@ -85,7 +85,9 @@ export function useOnScreen(ref, margin = '80px') {
   const [on, setOn] = useState(true);
   useEffect(() => {
     if (!ref.current || typeof IntersectionObserver !== 'function') return undefined;
-    const io = new IntersectionObserver(([e]) => setOn(e.isIntersecting), { rootMargin: margin });
+    // the batch's LAST entry: an observer may hand one callback several entries for one target, oldest first, and a
+    // first-entry read left a settle paused as hidden for good after a [hidden, shown] batch
+    const io = new IntersectionObserver((es) => { if (es.length) setOn(!!es[es.length - 1].isIntersecting); }, { rootMargin: margin });
     io.observe(ref.current);
     return () => io.disconnect();
   }, []);
