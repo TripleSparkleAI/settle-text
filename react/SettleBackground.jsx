@@ -61,6 +61,7 @@ export function SettleBackground({
   temperature,
   settleTime,
   resettle = BACKGROUND.resettle,
+  haze,
   ambient = BACKGROUND.ambient,
   shimmer,
   onShimmer,
@@ -79,7 +80,7 @@ export function SettleBackground({
 }) {
   const box = useRef(null);
   const { w, h } = useBoxSize(box);
-  const common = { resolution, pitch, color, glow, temperature, settleTime, resettle, ambient, shimmer, onShimmer, breathe, rest, intro, fps, simmerFps, palette, offColor, dim, paused, still, decorative: true, width: w || null };
+  const common = { resolution, pitch, color, glow, temperature, settleTime, resettle, haze, ambient, shimmer, onShimmer, breathe, rest, intro, fps, simmerFps, palette, offColor, dim, paused, still, decorative: true, width: w || null };
   let layer = null;
   if (w > 0 && h > 0) {
     const c = color ?? PALETTE.background;

@@ -44,6 +44,8 @@ import { isNeonKey } from '../src/colour.js';
 import { fontFamilyOf, fontWeightOf } from './hooks.js';
 import { TEXT } from '../src/presets.js';
 import { PALETTE } from '../src/palette.js';
+import { DEFAULT_FONT } from '../src/fonts.js';
+import { pick, useSettleTextDefaults } from './defaults.js';
 
 function useFontPx(ref) {
   const [px, setPx] = useState(0);
@@ -69,7 +71,7 @@ export function SettleHeading({
   level = 1,
   as = null,
   size,
-  font = 'sans-serif',
+  font: fontProp,
   weight,
   color,
   pitch,
@@ -83,6 +85,7 @@ export function SettleHeading({
   ...rest
 }) {
   const ref = useRef(null);
+  const font = pick(fontProp, 'font', useSettleTextDefaults(), DEFAULT_FONT);
   const px = useFontPx(ref);
   const words = headingText(text, children);
   const n = headingLevel(level);

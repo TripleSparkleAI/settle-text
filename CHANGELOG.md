@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.6.0 (2026-10-09)
+
+- **THE ACTIVE HAZE.** Every piece of text re-settles on its own rotation again: on its turn the heat climbs over
+  500 ms to 0.7 to 0.85 (the letters dissolve into a haze you can still read the shape of) and they settle back over
+  2.4 s into the same words. The default rotation is every 11.5 s +/- 30% (8 to 15 s), with a random phase: the first
+  turn lands 0.1 to 1 interval after mount, so pieces mounted together never turn together. Since 0.5.0 the full
+  re-settle was 1 card in 10 of the ambient shimmer, about every 35 s, and the navigator saw text that did not
+  re-settle at all. The shimmer deck keeps dealing the small effects; with the haze on it deals no re-settle.
+- New prop on every component: `haze` (`true`, `false`, an interval in ms, or `{ every, jitter, level, ramp, cool,
+  kind }`, with `every` a number or `[min, max]`). `SettleTextDefaults` takes `haze`. `onResettle` says
+  `{ haze: true }` for a haze turn, and the box carries `data-settle-haze` (`'on'`, `'legacy'` or `'off'`) and
+  `data-settle-haze-turn` (the turns so far).
+- THE PLAN: an explicit `haze` wins. With no `haze`, a component given `resettle` or `breathe` keeps exactly 0.5.0's
+  meaning of those props, so no page that set them changes. `haze={false}` with no `resettle` turns the full
+  re-settle off everywhere (no rotation and no re-settle card). `SettleBackground` keeps its own slower 11 to 17 s
+  clock unless it is given `haze`.
+- PAUSES: off screen the rotation stops (the IntersectionObserver every component already had); in a hidden tab a
+  turn is skipped and nothing runs; under `prefers-reduced-motion` and with `still` there is no haze.
+- The pure half exports `HAZE`, `hazeOf`, `hazePlan`, `hazeDelay`, `hazeLevel` and `createHazeClock` (the rotation on
+  injectable timers, tested on a fake clock).
+- **THE FACES.** The package ships eight free faces in `fonts/`, each with its SIL Open Font License 1.1 file and a
+  README giving its source, the date fetched and its sha256: four clean (Inter, Geist, Archivo, Space Grotesk) and
+  four sci-fi (Orbitron, Exo 2, Oxanium, Audiowide). `import 'settle-text/fonts.css'` declares them (a new export);
+  `FONTS`, `FONT_KINDS`, `DEFAULT_FONT`, `DEFAULT_FONT_KEY` and `fontOf` list them. `sideEffects` is now `['*.css']`
+  so a bundler keeps that import.
+- THE DEFAULT FONT is Inter (`'"Inter", "Helvetica Neue", Helvetica, Arial, sans-serif'`), was `'sans-serif'`: of
+  thirteen free faces drawn as lights, Inter read best at prose size. `SettleTextDefaults` takes `font`.
+
 ## 0.5.0 (2026-10-07)
 
 - **THE AMBIENT SHIMMER.** Every alive piece of text keeps its own small schedule: it deals SHIMMERS from its own

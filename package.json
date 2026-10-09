@@ -1,6 +1,6 @@
 {
   "name": "settle-text",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "description": "Render text, images and vectors as a live settle of lights, in React. No theory needed: give it words and a font.",
   "license": "MIT",
@@ -8,11 +8,12 @@
   "main": "src/index.js",
   "exports": {
     ".": "./src/index.js",
-    "./react": "./react/index.js"
+    "./react": "./react/index.js",
+    "./fonts.css": "./fonts/fonts.css"
   },
-  "files": ["src", "react", "docs", "examples", "README.md", "CHANGELOG.md", "PUBLISHING.md"],
-  "sideEffects": false,
-  "keywords": ["react", "text", "font", "canvas", "dot-matrix", "neon", "settle", "p-bits"],
+  "files": ["src", "react", "fonts", "docs", "examples", "README.md", "CHANGELOG.md", "PUBLISHING.md"],
+  "sideEffects": ["*.css"],
+  "keywords": ["react", "text", "font", "fonts", "canvas", "dot-matrix", "neon", "settle", "p-bits"],
   "engines": { "node": ">=18" },
   "scripts": {
     "test": "node --test tests/*.test.mjs",

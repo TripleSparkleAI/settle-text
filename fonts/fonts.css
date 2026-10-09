@@ -1,0 +1,69 @@
+/* settle-text · fonts.css - THE FACES (settle-text 0.6.0): one @font-face per face the package ships, four clean
+   (Inter, the default; Geist; Archivo; Space Grotesk) and four sci-fi (Orbitron, Exo 2, Oxanium, Audiowide). Import
+   it once in your app: import 'settle-text/fonts.css'. A browser downloads a face only when something is drawn in
+   it. Every face is SIL Open Font License 1.1; each folder holds its OFL.txt and a README.md with its source. The
+   list in JavaScript is src/fonts.js (FONTS); tests/fonts.test.mjs keeps the two in step. */
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('./inter/inter-100-900.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('./geist/geist-100-900.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('./archivo/archivo-100-900.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('./space-grotesk/space-grotesk-300-700.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Orbitron';
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url('./orbitron/orbitron-400-900.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Exo 2';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('./exo-2/exo-2-100-900.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Oxanium';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('./oxanium/oxanium-200-800.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Audiowide';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./audiowide/audiowide-400.woff2') format('woff2');
+}

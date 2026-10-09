@@ -319,7 +319,7 @@ test('still, reduced motion and off screen mean no shimmer; a hidden tab skips i
   assert.match(lights, /active: !frozen && !paused && onScreen && !!spec/, 'off screen and paused stop the clock');
   assert.match(lights, /weather=\{amb\.weather\}/);
   assert.match(lights, /beforeStep=\{amb\.beforeStep\}/);
-  assert.match(lights, /const sched = amb\.spec && rMode !== 'clock' \? null : resettleSpec;/, 'the 0.4.0 clock steps aside for the deck');
+  assert.match(lights, /const sched = !legacy \|\| \(amb\.spec && rMode !== 'clock'\) \? null : resettleSpec;/, 'the 0.4.0 clock steps aside for the deck, and for the haze (0.6.0)');
   const hook = read('react/ambient.js');
   assert.match(hook, /if \(!spec \|\| !active\) return undefined;/);
   assert.match(hook, /document\.hidden\) return plan\(/, 'a hidden tab skips its turn');

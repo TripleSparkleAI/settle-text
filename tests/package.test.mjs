@@ -10,15 +10,16 @@ const ROOT = new URL('..', import.meta.url).pathname;
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');
 const pkg = JSON.parse(read('package.json'));
 
-test('package.json: the name, the two exports, a React peer, settle-see as the one dependency, private, no publish', () => {
+test('package.json: the name, the three exports, a React peer, settle-see as the one dependency, private, no publish', () => {
   assert.equal(pkg.name, 'settle-text');
   assert.match(pkg.version, /^\d+\.\d+\.\d+$/);
   assert.equal(pkg.type, 'module');
   assert.equal(pkg.private, true, 'nothing is published (the LOCAL-ONLY LAW); PUBLISHING.md says what it would take');
-  assert.deepEqual(pkg.exports, { '.': './src/index.js', './react': './react/index.js' });
+  assert.deepEqual(pkg.exports, { '.': './src/index.js', './react': './react/index.js', './fonts.css': './fonts/fonts.css' });
   assert.deepEqual(Object.keys(pkg.peerDependencies), ['react', 'react-dom']);
   assert.deepEqual(Object.keys(pkg.dependencies), ['settle-see']);
-  assert.equal(pkg.sideEffects, false);
+  // the one file with a side effect is the stylesheet of faces (0.6.0): a bundler must keep `import 'settle-text/fonts.css'`
+  assert.deepEqual(pkg.sideEffects, ['*.css']);
   for (const f of pkg.files) assert.ok(existsSync(join(ROOT, f)), `files: ${f}`);
   assert.ok(!pkg.scripts.publish && !pkg.scripts.prepublishOnly, 'no publish script');
 });

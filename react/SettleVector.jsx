@@ -52,6 +52,7 @@ export function SettleVector({
   temperature,
   settleTime,
   resettle,
+  haze,
   breathe,
   rest,
   intro,
@@ -108,6 +109,7 @@ export function SettleVector({
       temperature={temperature}
       settleTime={settleTime}
       resettle={resettle}
+      haze={haze}
       breathe={breathe}
       rest={rest}
       intro={intro}

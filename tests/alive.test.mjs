@@ -176,7 +176,8 @@ test('Lights runs the schedule through the conductor, joins it only while alive 
   assert.match(src, /if \(!sched \|\| !onScreen \|\| paused \|\| !spec\) return undefined;/, 'no schedule off screen or paused');
   assert.match(src, /document\.hidden\) return plan\(\);/, 'a hidden tab skips the re-settle');
   assert.match(src, /CONDUCTOR\.tryStart\(id\.current, nowMs\(\), ms\)/, 'every re-settle asks the page first (the clock and the shimmer deck share one fireResettle)');
-  assert.match(src, /kick\(level, ALIVE\.rampMs, cool\)/, 'a heat re-settle ramps, and cools over its own time');
+  assert.match(src, /const ramp = isHaze \? spec0\.rampMs : ALIVE\.rampMs;/, 'a re-settle ramps over ALIVE.rampMs, a haze turn over its own ramp (0.6.0)');
+  assert.match(src, /kick\(level, ramp, cool\)/, 'a heat re-settle ramps, and cools over its own time');
   assert.match(src, /fps=\{hot \|\| restNow \|\| amb\.shimmering \? fpsHot : simmer\}/, 'full rate while hot or while a shimmer plays, the thinned simmer otherwise');
   assert.match(src, /data-settle-alive=\{frozen \? 'still' : restNow \? 'rest' : 'alive'\}/, 'the state is readable from the page');
 });

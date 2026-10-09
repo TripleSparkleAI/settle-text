@@ -4,7 +4,8 @@
 // ** Function List **
 // SettleText(props) - the component
 //   text         string, required     the words
-//   font         string | { family, weight }  a CSS font family list; waits for document.fonts to load it
+//   font         string | { family, weight }  a CSS font family list (default DEFAULT_FONT, Inter, or the
+//                                     SettleTextDefaults font); waits for document.fonts to load it
 //   weight       number (700)         the face's weight (a wide script takes 400 unless you say otherwise)
 //   size         number, CSS px (64)  the font size, as in CSS (a capital stands at the face's cap height, ~0.7 of it)
 //   color        any CSS colour or a neon word (pink, rose, cyan, lime, violet, green ...); default HYPER PINK
@@ -19,8 +20,10 @@
 //                                     the font loads); without it the text fills its container
 //   temperature  number (0.6)         the simmer: how much the lights flicker between re-settles (0.45 calm, 0.8 wild)
 //   settleTime   ms (1500)            from noise to words, and from a re-settle's peak back to the simmer
-//   resettle     true | false | ms | { every, jitter, level, kind } | (n) => ms   the re-settle schedule (default
-//                                     every 9 s, jitter 0.35, level 0.4 to 0.65, kind 'heat'; 'shake' or 'mix')
+//   haze         true | false | ms | { every, jitter, level, ramp, cool, kind }   THE ACTIVE HAZE (0.6.0): the
+//                                     re-settle rotation, every 8 to 15 s by default (src/haze.js)
+//   resettle     true | false | ms | { every, jitter, level, kind } | (n) => ms   0.5.0's re-settle schedule, read
+//                                     when haze is not given (every 9 s, jitter 0.35, level 0.4 to 0.65)
 //   breathe      0.3.0's name for the schedule (seconds, or { every: [s, s], level }), read when resettle is unset
 //   rest         bool (false)         cool and stop drawing between re-settles (0.3.0's resting picture)
 //   intro        0..1 (1)             the heat at mount: 1 out of full noise, 0 the words there at once
@@ -59,6 +62,7 @@ import { makeCanvas } from 'settle-see';
 import { Lights } from './Lights.jsx';
 import { TEXT, textPitch } from '../src/presets.js';
 import { PALETTE } from '../src/palette.js';
+import { DEFAULT_FONT } from '../src/fonts.js';
 import { pick, useSettleTextDefaults } from './defaults.js';
 import { textGrid, wrapLines, textSpec, wideScript, fitWidth } from '../src/layout.js';
 import { resolveColour } from './colour.js';
@@ -77,7 +81,7 @@ export function measureRatio(text, font, weight) {
 
 export function SettleText({
   text = '',
-  font = 'sans-serif',
+  font: fontProp,
   weight,
   size = 64,
   color,
@@ -91,6 +95,7 @@ export function SettleText({
   temperature,
   settleTime,
   resettle,
+  haze,
   breathe,
   rest,
   intro,
@@ -117,6 +122,7 @@ export function SettleText({
   defaultColor = PALETTE.text,
 }) {
   const ctx = useSettleTextDefaults();
+  const font = pick(fontProp, 'font', ctx, DEFAULT_FONT);
   resolution = pick(resolution, 'resolution', ctx, 'auto');
   const outer = useRef(null);
   const tr = useMemo(() => transitionOf(transition, duration), [typeof transition === 'object' && transition ? JSON.stringify(transition) : transition, duration]);
@@ -157,6 +163,7 @@ export function SettleText({
       temperature={temperature}
       settleTime={settleTime}
       resettle={resettle}
+      haze={haze}
       breathe={breathe}
       rest={rest}
       intro={intro}

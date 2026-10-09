@@ -16,7 +16,10 @@
 //   glow                        the bloom (0 raw dots)
 //   temperature                 the simmer: where the lights rest and keep flickering (0.6; 0.3.0 rested at 0.45)
 //   settleTime                  ms from noise to the picture, and from a re-settle's peak back to the simmer
-//   resettle                    the schedule: true | false | ms | { every, jitter, level, kind } | (n) => ms
+//   haze                        THE ACTIVE HAZE (0.6.0, src/haze.js): the re-settle rotation, true (every 8 to 15 s,
+//                               the default) | false | ms | { every, jitter, level, ramp, cool, kind }
+//   resettle                    the 0.5.0 schedule, read when haze is not given: true | false | ms | { every, jitter,
+//                               level, kind } | (n) => ms
 //   breathe                     0.3.0's idle breath, read as a resettle when resettle is not given
 //   ambient                     THE AMBIENT SHIMMER (0.5.0, src/ambient.js): true (the 'gentle' preset) | false |
 //                               'whisper' | 'gentle' | 'lively' | an effect name | [names] | { preset, every, jitter,
@@ -55,6 +58,13 @@
 //   small effects; `resettle={false}` takes the re-settle out; `ambient={false}` is 0.4.0's behaviour exactly.
 //   The box says which deck it deals (data-settle-ambient: the preset, 'custom' or 'off') and its last shimmer
 //   (data-settle-shimmer: '<count> <name>'), so a page or a measurement can read them.
+// - THE ACTIVE HAZE (0.6.0): hazePlan decides which clock runs the full re-settle. By default ('haze') each piece
+//   runs its own rotation (createHazeClock, a random phase, the interval +/- its jitter): on its turn fireResettle
+//   ramps the heat over 600 ms to 0.9 to 1 and the haze settles back over 3 s, and the shimmer deck deals only small
+//   effects. A caller who set resettle or breathe and no haze gets 0.5.0 exactly ('legacy'). haze={false} with no
+//   resettle runs no full re-settle ('off'). The clock runs only while the box is on screen and not paused, skips its
+//   turn in a hidden tab, and never runs frozen (still or reduced motion). The box says data-settle-haze and, after
+//   each turn, data-settle-haze-turn.
 // - THE PAGE THINS ITSELF: an alive settle on screen joins the page's conductor (react/defaults.js), weighted by its
 //   lights (weightOf). The simmer rate and the re-settle interval follow the weighted crowd on screen (thinFor), at most maxConcurrent
 //   re-settles run at once, and past 40 alive on screen each rests between its re-settles. Never static.
@@ -79,6 +89,7 @@ import { HOVER, hoverLevelOf, createHoverGate } from '../src/hover.js';
 import { useReducedMotion, useOnScreen, nowMs } from './hooks.js';
 import { CONDUCTOR, pick, useAliveCount, useSettleTextDefaults } from './defaults.js';
 import { useAmbient, resettleMode } from './ambient.js';
+import { hazePlan, hazeLevel, createHazeClock } from '../src/haze.js';
 
 const SR = { position: 'absolute', width: 1, height: 1, margin: -1, padding: 0, overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap', border: 0 };
 let nextId = 1;
@@ -98,6 +109,7 @@ export function Lights({
   settleTime,
   resettle,
   breathe,
+  haze,
   rest,
   intro,
   paused = false,
@@ -141,7 +153,14 @@ export function Lights({
   const resettleSpec = useMemo(() => (frozen ? null : resettleOf(resettleProp, breathe)), [frozen, schedKey]);
   // THE AMBIENT SHIMMER: the prop (or its alias shimmer, or the provider's), and how the re-settle takes part in it
   const ambientProp = ambient !== undefined ? ambient : shimmer !== undefined ? shimmer : ctx.ambient !== undefined ? ctx.ambient : ctx.shimmer;
-  const rMode = resettleMode(resettleProp, breathe);
+  // THE ACTIVE HAZE (0.6.0, src/haze.js): which clock runs the full re-settle. 'haze' is the rotation (the default);
+  // 'legacy' keeps 0.5.0's meaning of a resettle or breathe prop the caller set; 'off' runs no full re-settle at all
+  const hazeProp = pick(haze, 'haze', ctx, undefined);
+  const hazeKey = JSON.stringify(hazeProp ?? null);
+  const plan = useMemo(() => hazePlan({ haze: hazeProp, resettle: resettleProp, breathe, frozen }), [hazeKey, schedKey, frozen]);
+  const legacy = plan.mode === 'legacy';
+  const hazeSpec = plan.mode === 'haze' ? plan.spec : null;
+  const rMode = legacy ? resettleMode(resettleProp, breathe) : hazeSpec ? 'clock' : false;
 
   // the page's conductor: an alive settle on screen is a member, and the count thins the simmer and the schedule
   const alive = !frozen && !resting && !paused && onScreen && !!spec;
@@ -166,8 +185,9 @@ export function Lights({
       onShimmer?.(info);
     },
   });
-  // THE ALIVE DEFAULT's own clock runs when there is no shimmer, or when the caller set the re-settle's interval
-  const sched = amb.spec && rMode !== 'clock' ? null : resettleSpec;
+  // THE ALIVE DEFAULT's own clock (legacy mode only) runs when there is no shimmer, or when the caller set the
+  // re-settle's interval; in haze mode the rotation below is the one clock
+  const sched = !legacy || (amb.spec && rMode !== 'clock') ? null : resettleSpec;
   const count = useAliveCount();
   const thin = thinFor(alive ? count : 0);
   const simmer = simmerFpsFor(alive ? count : 0, fpsSimmerBase);
@@ -232,11 +252,12 @@ export function Lights({
   const hooks = useRef({});
   hooks.current = { onResettle, settleMs, everyScale: thin.everyScale };
   const done = useRef(0);
-  function fireResettle(spec0 = resettleSpec ?? resettleOf(true)) {
+  function fireResettle(spec0 = resettleSpec ?? resettleOf(true), isHaze = false) {
     if (frozen || !spec0) return false;
-    const level = resettleLevel(spec0, Math.random);
+    const level = isHaze ? hazeLevel(spec0, Math.random) : resettleLevel(spec0, Math.random);
     const cool = spec0.coolMs ?? ALIVE.coolMs;
-    const ms = cool + ALIVE.rampMs;
+    const ramp = isHaze ? spec0.rampMs : ALIVE.rampMs;
+    const ms = cool + ramp;
     if (!CONDUCTOR.tryStart(id.current, nowMs(), ms)) return false;
     const n = done.current;
     const shake = spec0.kind === 'shake' || (spec0.kind === 'mix' && n % 3 === 2);
@@ -247,11 +268,21 @@ export function Lights({
         /* a field that cannot shake still re-settles by heat */
       }
       kick(level * 0.6, 0, cool);
-    } else kick(level, ALIVE.rampMs, cool);
+    } else kick(level, ramp, cool);
     done.current = n + 1;
-    hooks.current.onResettle?.({ count: n + 1, level, kind: shake ? 'shake' : 'heat' });
+    if (isHaze && box.current) box.current.dataset.settleHazeTurn = String(n + 1);
+    hooks.current.onResettle?.({ count: n + 1, level, kind: shake ? 'shake' : 'heat', haze: isHaze });
     return true;
   }
+
+  // THE ACTIVE HAZE's rotation: on screen and not paused, one clock per piece on its own random phase; a hidden tab
+  // skips its turns, and the IntersectionObserver (useOnScreen) stops the clock off screen
+  useEffect(() => {
+    if (!hazeSpec || !onScreen || paused || !spec) return undefined;
+    const clock = createHazeClock({ spec: hazeSpec, fire: () => fireResettle(hazeSpec, true), scale: () => hooks.current.everyScale });
+    clock.start();
+    return () => clock.stop();
+  }, [hazeSpec, onScreen, paused, spec, tick]);
 
   // THE RE-SETTLE CLOCK (0.4.0's schedule): on the cadence the component sets, when no shimmer deals the re-settle
   useEffect(() => {
@@ -326,6 +357,7 @@ export function Lights({
       data-settle-text=""
       data-settle-alive={frozen ? 'still' : restNow ? 'rest' : 'alive'}
       data-settle-ambient={amb.spec ? amb.spec.preset || 'custom' : 'off'}
+      data-settle-haze={hazeSpec ? 'on' : legacy ? 'legacy' : 'off'}
     >
       {!decorative && label && <span style={SR}>{label}</span>}
       {cols > 0 && rows > 0 && items && (

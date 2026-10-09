@@ -17,6 +17,9 @@
 // createHeat / tauFor / breathOf / breathDelay - heat.js: the temperature over time
 // TRANSITION / SEQUENCE / transitionOf / morphHow / intervalFor / sequenceAt / createSequencer - transition.js: how a
 //   change of words is shown (a morph or a cut) and the clock a SettleSequence steps on
+// HAZE / hazeOf / hazePlan / hazeDelay / hazeLevel / createHazeClock - haze.js: THE ACTIVE HAZE, each piece's own
+//   re-settle rotation (0.6.0)
+// FONTS / FONT_KINDS / DEFAULT_FONT_KEY / DEFAULT_FONT / fontOf - fonts.js: the eight faces the package ships (0.6.0)
 // HEADING / headingLevel / headingCss / headingFontPx / headingSize / headingPitch / headingLights / headingElement /
 //   headingText - heading.js: the six heading levels, their size scale and the lights each size gets
 //
@@ -37,4 +40,6 @@ export { NEON_WORDS, NEON_HEX, CSS_NAMES, isNeonKey, neonKey, parseColour, toSet
 export { fitBox, luminance, luminances, coverages, thresholdBits, ditherBits, sampleLights, sampleCoverage, sourcePaint, litCount, parseViewBox, svgKind } from './raster.js';
 export { createHeat, tauFor, breathOf, breathDelay } from './heat.js';
 export { TRANSITION, SEQUENCE, transitionOf, morphHow, intervalFor, sequenceAt, createSequencer } from './transition.js';
+export { HAZE, hazeOf, hazePlan, hazeDelay, hazeLevel, createHazeClock } from './haze.js';
+export { FONTS, FONT_KINDS, DEFAULT_FONT_KEY, DEFAULT_FONT, fontOf } from './fonts.js';
 export { HEADING, headingLevel, headingCss, headingFontPx, headingSize, headingPitch, headingLights, headingElement, headingText } from './heading.js';

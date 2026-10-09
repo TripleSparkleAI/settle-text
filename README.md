@@ -28,12 +28,14 @@ Nothing is on the npm registry (PUBLISHING.md). To run its tests, clone it: `git
 `cd settle-text`, `npm install && npm test`.
 
 ```jsx
+import 'settle-text/fonts.css';
 import { SettleText } from 'settle-text/react';
 
-<SettleText text="What?" font='"Space Grotesk", sans-serif' />
+<SettleText text="What?" />
 ```
 
-That is the whole thing. A few more lines cover the rest of the package:
+That is the whole thing. The first line loads the eight faces the package ships (see Fonts); the words are drawn in
+Inter unless you name another face. A few more lines cover the rest of the package:
 
 ```jsx
 import { SettleHeading, SettleLink, SettleSequence, SettleImage, SettleVector, SettleBackground } from 'settle-text/react';
@@ -57,23 +59,56 @@ Try every recipe on one page: `bash examples/demo/run.sh` (serves on 5240; insid
 repository it borrows the site's `node_modules`, anywhere else it installs vite and React into `examples/demo` once). Recipes with their code:
 [docs/RECIPES.md](docs/RECIPES.md); the runnable files are in [examples/](examples/).
 
+## Fonts
+
+The package ships eight free faces that read well as lights, in `fonts/`. Four are clean neo-grotesque sans faces,
+close to Helvetica. Four are futuristic sci-fi faces. Every one is SIL Open Font License 1.1, which allows it to be
+bundled and redistributed with your app, and each folder holds the font's `OFL.txt` and a README with its source and
+sha256.
+
+```jsx
+import 'settle-text/fonts.css';                     // once, anywhere in your app
+import { SettleText, fontOf, FONTS } from 'settle-text/react';
+
+<SettleText text="Lights" />                        // Inter, the default
+<SettleText text="Lights" font={fontOf('orbitron')} />
+<SettleText text="Lights" font='"Exo 2", sans-serif' />
+```
+
+| key | face | kind | drawn at |
+|---|---|---|---|
+| `inter` | Inter | clean, the default | 700 |
+| `geist` | Geist | clean | 700 |
+| `archivo` | Archivo | clean | 700 |
+| `space-grotesk` | Space Grotesk | clean | 700 |
+| `orbitron` | Orbitron | sci-fi | 700 |
+| `exo-2` | Exo 2 | sci-fi | 700 |
+| `oxanium` | Oxanium | sci-fi | 700 |
+| `audiowide` | Audiowide | sci-fi | 400, its one weight |
+
+`fonts.css` declares one `@font-face` per file with `font-display: swap`, and a browser downloads a face only when
+something is drawn in it. Without the import the default falls back to Helvetica Neue, Helvetica, then Arial. `FONTS`
+lists the faces with their kind, CSS family stack, weight, file and licence; `fontOf(key or name)` gives the
+`{ family, weight }` a `font` prop takes. Thirteen free faces were drawn as lights at 88, 40 and 22 px to choose
+these; Inter reads best at prose size, so it is the default.
+
 ## Alive by default
 
 Every component, from `SettleText` to `SettleBackground`, is alive unless you say otherwise. Three things make it so:
-the simmer, the re-settle, and since 0.5.0 THE AMBIENT SHIMMER (the next section), which deals the re-settle as one
-card in about ten among smaller effects.
+the simmer, THE ACTIVE HAZE (each piece re-settles on its own rotation, see the next section), and THE AMBIENT
+SHIMMER (small effects between the re-settles).
 
 1. **The simmer.** The lights rest at a warm `temperature` (0.6) and keep sweeping, so the edges of the words
    glitter and a few lights spark in the dark around them. A light on a letter's edge flips about 1 time in 40 a
    sweep at 0.6; at 0.45 it flips 1 time in 130, nearly still.
-2. **The re-settle.** When the shimmer deals it, or on a clock you set with `resettle`, the heat climbs for 400 ms, the words scatter a little
-   (the temperature peaks near 1.3 to 1.8), and they cool back over 2.8 s into the same words, at the full
-   24 sweeps a second. Between re-settles the simmer runs at 12 sweeps a second. With the shimmer off
-   (`ambient={false}`) the first re-settle lands 2 to 9 s after the words appear and the next ones every 6 to 12 s,
-   as in 0.4.0.
+2. **The re-settle.** By default this is THE ACTIVE HAZE (the next section): every 8 to 15 s each piece heats
+   into a haze and settles back. A `resettle` prop, when you give one and no `haze`, keeps its 0.5.0 meaning: on its
+   clock the heat climbs for 400 ms, the words scatter a little (the temperature peaks near 1.3 to 1.8), and they
+   cool back over 2.8 s into the same words, at the full 24 sweeps a second. Between re-settles the simmer runs at
+   12 sweeps a second.
 
 ```jsx
-<SettleText text="Settle" />                                              // alive: simmer + the ambient shimmer
+<SettleText text="Settle" />                                              // alive: simmer, the active haze, the shimmer
 <SettleText text="Settle" resettle={2000} />                              // every 2 s
 <SettleText text="Settle" resettle={{ every: [6000, 14000], level: 0.8 }} />  // a long, uneven wait, a bigger scatter
 <SettleText text="Settle" resettle={{ every: 4000, kind: 'shake' }} />    // shake the lights loose instead of heating
@@ -85,7 +120,8 @@ card in about ten among smaller effects.
 
 | prop | default | what it does |
 |---|---|---|
-| `resettle` | `true` | the re-settle: `true` (the default: a card in the shimmer's deck), `false` (none), a number (an interval in ms: the 0.4.0 clock, and the deck then deals only the small effects), `{ every, jitter, level, kind, cool }` (with `every` a clock; without it, how strong the dealt re-settle is), or a function `(n) => ms` asked for the wait before re-settle `n` (return `null` to stop) |
+| `haze` | `true` | THE ACTIVE HAZE, each piece's re-settle rotation (see the next section); an explicit `haze` wins over `resettle` |
+| `resettle` | | read only when `haze` is not given (0.5.0's meaning): `true` (a card in the shimmer's deck), `false` (none), a number (an interval in ms: the 0.4.0 clock, and the deck then deals only the small effects), `{ every, jitter, level, kind, cool }` (with `every` a clock; without it, how strong the dealt re-settle is), or a function `(n) => ms` asked for the wait before re-settle `n` (return `null` to stop) |
 | `resettle.every` | `9000` | ms between re-settles on the clock, or `[min, max]` (the clock runs when you set it, or with `ambient={false}`) |
 | `resettle.jitter` | `0.35` | the wait varies by this share either way |
 | `resettle.level` | `[0.4, 0.65]` | how far the heat climbs, 0 to 1; a number or a range drawn each time |
@@ -97,7 +133,7 @@ card in about ten among smaller effects.
 | `intro` | `1` | the heat at mount: `1` out of full noise, `0` the words there at once and then alive |
 | `fps` | `24` | sweeps a second while settling |
 | `simmerFps` | `12` | sweeps a second between re-settles (the page thins it, see below) |
-| `onResettle` | none | `({ count, level, kind })` at each re-settle |
+| `onResettle` | none | `({ count, level, kind, haze })` at each re-settle; `haze` is `true` for a turn of the active haze |
 | `breathe` | | 0.3.0's name for the schedule (seconds, or `{ every: [s, s], level }`), read as `resettle` when `resettle` is not given; `breathe={false}` turns the schedule off |
 
 **The page thins itself, and never goes static.** Every alive settle on screen joins one page-wide conductor, and
@@ -108,12 +144,53 @@ past 40, each rests between its re-settles. At most 4 re-settles run at once on 
 `SettleTextDefaults`); one that finds the cap full waits 0.4 to 1.6 s and asks again. Off screen a settle pauses and
 leaves the conductor; in a hidden tab nothing runs; under `prefers-reduced-motion` every component is still.
 
+## The active haze
+
+Every piece of text re-settles on its own rotation. On its turn the heat climbs over 600 ms to the mount's own heat
+(a level of 0.9 to 1), the letters dissolve into a haze you can still read the shape of, and they settle back over
+3 s into the same words. The default rotation is every 11.5 s with a jitter of 30% either way, so 8 to 15 s, and each
+piece's first turn lands anywhere from a tenth of an interval to a whole one after it mounts, so the pieces on one
+page never turn together.
+
+```jsx
+<SettleText text="Settle" />                                   // the default: every 8 to 15 s
+<SettleText text="Settle" haze={5000} />                       // every 5 s, +/- 30%
+<SettleText text="Settle" haze={{ every: [4000, 20000] }} />   // a wide, uneven rotation
+<SettleText text="Settle" haze={{ every: 6000, jitter: 0 }} /> // exactly every 6 s
+<SettleText text="Settle" haze={{ level: 0.6, cool: 2000 }} /> // a lighter haze, a quicker return
+<SettleText text="Settle" haze={false} />                      // off: no re-settle at all
+```
+
+| prop | default | what it does |
+|---|---|---|
+| `haze` | `true` | `true` (the default rotation), `false` (off), a number (the interval in ms), or `{ every, jitter, level, ramp, cool, kind }` |
+| `haze.every` | `11500` | ms between turns, or `[min, max]`; never under 2,000 |
+| `haze.jitter` | `0.3` | each wait varies by this share either way |
+| `haze.level` | `[0.9, 1]` | how far the heat climbs, 0 to 1 (1 is the mount's heat); a number or a range drawn each turn |
+| `haze.ramp` | `600` | ms the heat takes to climb |
+| `haze.cool` | `3000` | ms the haze takes to settle back |
+| `haze.kind` | `'heat'` | `'heat'`, `'shake'` (the lights shaken loose) or `'mix'` (a shake every third turn) |
+
+**Which clock runs.** An explicit `haze` wins. With no `haze`, a component given `resettle` or `breathe` keeps exactly
+what those props meant in 0.5.0, so a page that set them does not change. `haze={false}` with no `resettle` turns the
+full re-settle off everywhere, and the shimmer deck then deals only its small effects. With the haze on, the deck
+deals no re-settle of its own. `SettleBackground` keeps its slower 11 to 17 s clock unless you give it a `haze`.
+
+**When it stops.** Off screen the rotation stops (every component already watches its box with an
+IntersectionObserver), in a hidden tab a turn is skipped and nothing runs, and under `prefers-reduced-motion` or
+with `still` there is no haze at all. A turn asks the page's cap first: at most 4 re-settles run at once, and one that
+finds the cap full asks again 0.4 to 1.6 s later. The box carries `data-settle-haze` (`'on'`, `'legacy'` or `'off'`)
+and `data-settle-haze-turn` (the turns so far). The pure half exports the rotation as `createHazeClock`, on timers you
+can pass in, with `HAZE`, `hazeOf`, `hazePlan`, `hazeDelay` and `hazeLevel`.
+
 ## The ambient shimmer
 
 Every alive piece of text keeps its own small schedule. Each one deals SHIMMERS from its own deck of cards (a shuffle
 bag: every card once a round, in a fresh order, never the same card twice in a row), on its own clock: its period is
 the preset's gap times 0.75 to 1.25, drawn when it mounts, and its first shimmer lands anywhere from 0.15 to 1 period
-in, so no two pieces move together. Most cards are small effects; about 1 card in 10 is the full re-settle. Each
+in, so no two pieces move together. Most cards are small effects. With the active haze off and no `resettle`
+clock, about 1 card in 10 is the full re-settle; with the haze on (the default) the haze is the re-settle and the deck
+deals only the small effects. Each
 effect is drawn by the settle itself, never by a CSS animation: a draw-only flash on chosen lights (the same flash
 settle-see's edge crackle uses), a moment's change to the settle's own knobs (heat, lean, the soft read), or a local
 melt (a region's lean toward the words turned down and back up through settle-see's per-light leans, so the field
@@ -190,7 +267,8 @@ import { SettleTextDefaults, SettleText } from 'settle-text/react';
 
 | key | what it sets |
 |---|---|
-| `temperature`, `settleTime`, `resettle`, `rest`, `still`, `intro`, `fps`, `simmerFps` | the live props, as above |
+| `temperature`, `settleTime`, `haze`, `resettle`, `rest`, `still`, `intro`, `fps`, `simmerFps` | the live props, as above |
+| `font` | the face for every `SettleText` and `SettleHeading` inside that does not name one |
 | `color`, `palette`, `dim`, `glow`, `resolution` | the look (a heading keeps the title tuning unless it is given a `resolution` or `pitch` of its own) |
 | `maxConcurrent` | the page's cap on re-settles running at once (4) |
 
@@ -231,7 +309,7 @@ it); the dots are `resolution` lights per em.
 | prop | default | what it does |
 |---|---|---|
 | `text` | required | the words |
-| `font` | `'sans-serif'` | a CSS font family list, or `{ family, weight }`; it waits for `document.fonts` to load the face and re-measures |
+| `font` | Inter (`DEFAULT_FONT`) | a CSS font family list, or `{ family, weight }` (`fontOf('orbitron')`); it waits for `document.fonts` to load the face and re-measures; see Fonts |
 | `weight` | `700` (`400` for kana, Han, Devanagari) | the face's weight |
 | `size` | `64` | the font size in CSS px |
 | `color` | `'#ff2fa0'` (HYPER PINK) | any CSS colour, or a neon word: `pink rose red orange amber lime green mint cyan ice indigo violet` |
@@ -245,6 +323,7 @@ it); the dots are `resolution` lights per em.
 | `width` | the container's | a fixed width in CSS px, or `'fit'`: one line exactly as wide as its words (measured again when the font loads) |
 | `temperature` | `0.6` | the simmer: `0.45` calm, `0.6` alive, `0.8` wild |
 | `settleTime` | `1500` | ms from noise to words at mount |
+| `haze` | `true` | THE ACTIVE HAZE, the re-settle rotation (see The active haze) |
 | `resettle`, `rest`, `intro`, `fps`, `simmerFps`, `onResettle` | alive | the schedule and the rates (see Alive by default) |
 | `ambient`, `onShimmer` | `true` | THE AMBIENT SHIMMER: the small effects each piece deals on its own clock (see The ambient shimmer) |
 | `breathe` | | 0.3.0's name for `resettle` |
@@ -315,9 +394,9 @@ A real heading, `<h1>` to `<h6>`, drawn as a settle. The level sets the element 
 `SettleText`.
 
 ```jsx
-import { SettleHeading } from 'settle-text/react';
+import { SettleHeading, fontOf } from 'settle-text/react';
 
-<SettleHeading level={1} text="Render text as light" font='"Space Grotesk", sans-serif' />
+<SettleHeading level={1} text="Render text as light" font={fontOf('orbitron')} />
 <SettleHeading level={2}>Getting started</SettleHeading>
 <SettleHeading level={3} color="cyan">Changing the words</SettleHeading>
 ```
@@ -521,7 +600,10 @@ does not use a sparse distributed memory, so "sdm" in the name would promise a m
 
 `npm test` runs the pure half in node: the grid and the wrap, the presets, the picture samplers against small
 known inputs (a diagonal, a flat grey under dither, a black shape by coverage, source colours), the colour words,
-the heat curve and its ramp, the alive schedule in every form and the page's thinning and conductor, the ambient
+the heat curve and its ramp, the alive schedule in every form and the page's thinning and conductor, the active
+haze (its default rotation, every form of the prop, which clock a component runs, the random phase and the jitter,
+and the rotation on a fake clock through a hidden tab, a full cap and a stop), the eight faces (each file, its
+licence, its README's sha256, the stylesheet that declares them, the default), the ambient
 shimmer (its range, its presets, its deck's one-in-ten re-settle, each piece's own phase, the effects' limits), the palette and
 its gradients, the transition and the sequence clock (on a fake timer), the heading scale and the lights each
 heading size gets, the hover level and gate, the one-line width a `'fit'` text needs, and the package's shape (the exports, wrap-never-fork, the public API staying simple, this
@@ -532,9 +614,10 @@ one of them.
 
 ```
 settle-text/
-  package.json         name settle-text · exports . and ./react · react peer · settle-see dependency · private
-  src/                 the pure half: presets, layout, colour, palette, raster, heat, alive, ambient, transition,
-                       heading, hover (node runs it)
+  package.json         name settle-text · exports ., ./react and ./fonts.css · react peer · settle-see dependency · private
+  src/                 the pure half: presets, layout, colour, palette, raster, heat, alive, haze, ambient, fonts,
+                       transition, heading, hover (node runs it)
+  fonts/               the eight faces: one folder each (the woff2, OFL.txt, README.md), fonts.css, README.md
   react/               the React half: Lights (the one place settle-see is mounted), the four components,
                        SettleSequence, SettleHeading, SettleLink, SettleTextDefaults and the page conductor, hooks
   tests/               node --test

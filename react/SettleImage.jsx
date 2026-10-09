@@ -56,6 +56,7 @@ export function SettleImage({
   temperature,
   settleTime,
   resettle,
+  haze,
   breathe,
   rest,
   intro,
@@ -111,6 +112,7 @@ export function SettleImage({
       temperature={temperature}
       settleTime={settleTime}
       resettle={resettle}
+      haze={haze}
       breathe={breathe}
       rest={rest}
       intro={intro}
