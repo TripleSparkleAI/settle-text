@@ -4,12 +4,21 @@
 //
 // <claudes_code_comments>
 // ** Function List **
-// TEXT / RESOLUTIONS / IMAGE_RESOLUTIONS / HEAT / BREATH / COLOUR - presets.js: the defaults and the ladders
+// TEXT / RESOLUTIONS / IMAGE_RESOLUTIONS / AUTO / HEAT / BREATH / COLOUR - presets.js: the defaults and the ladders
+// ALIVE / resettleOf / resettleDelay / resettleLevel / thinFor / simmerFpsFor / createConductor - alive.js: THE ALIVE
+//   DEFAULT, the re-settle schedule and the page-wide thinning (0.4.0)
+// NEON_RANGE / PALETTE / GRADIENTS / paletteOf / gradientStops / gradientPaint - palette.js: the colours and modes
 // resolveResolution / textPitch / imagePitch - presets.js: a preset or a number -> CSS px per light
-// wideScript / lightsPerBox / textGrid / wrapLines / textSpec / measureWith - layout.js: the grid and the drawing
+// wideScript / lightsPerBox / textGrid / wrapLines / textSpec / measureWith / fitWidth - layout.js: the grid, the
+//   drawing and the width of one line
+// HOVER / hoverLevelOf / createHoverGate - hover.js: the re-settle on hover and focus
 // NEON_WORDS / parseColour / toSettleColour / isNeonKey - colour.js: a colour word -> what settle-see takes
 // fitBox / sampleLights / ditherBits / thresholdBits / sourcePaint / parseViewBox / svgKind / litCount - raster.js
 // createHeat / tauFor / breathOf / breathDelay - heat.js: the temperature over time
+// TRANSITION / SEQUENCE / transitionOf / morphHow / intervalFor / sequenceAt / createSequencer - transition.js: how a
+//   change of words is shown (a morph or a cut) and the clock a SettleSequence steps on
+// HEADING / headingLevel / headingCss / headingFontPx / headingSize / headingPitch / headingLights / headingElement /
+//   headingText - heading.js: the six heading levels, their size scale and the lights each size gets
 //
 // ** Technical Review **
 // - Everything here runs in node, so `npm test` covers it without a browser. The React layer adds only what needs
@@ -18,8 +27,14 @@
 //   exact grid with a transparent plate and hands it a target spec made here.
 // </claudes_code_comments>
 
-export { TEXT, RESOLUTIONS, IMAGE_RESOLUTIONS, RESOLUTION_BOUNDS, HEAT, BREATH, COLOUR, resolveResolution, textPitch, imagePitch } from './presets.js';
-export { wideScript, lightsPerBox, textGrid, wrapLines, textSpec, measureWith } from './layout.js';
-export { NEON_WORDS, CSS_NAMES, isNeonKey, neonKey, parseColour, toSettleColour } from './colour.js';
+export { TEXT, RESOLUTIONS, IMAGE_RESOLUTIONS, RESOLUTION_BOUNDS, RETIRED_RESOLUTIONS, retiredResolution, AUTO, isAuto, HEAT, BREATH, COLOUR, resolveResolution, textPitch, imagePitch } from './presets.js';
+export { AMBIENT, AMBIENT_LIMITS, AMBIENT_EFFECTS, AMBIENT_NAMES, AMBIENT_PRESETS, AMBIENT_DEFAULT_PRESET, ambientOf, ambientPeriod, shimmerDelay, deckWeights, createAmbientDeck, wordBoxes, createShimmer } from './ambient.js';
+export { ALIVE, RESETTLE_KINDS, resettleOf, resettleDelay, resettleLevel, thinFor, simmerFpsFor, weightOf, createConductor } from './alive.js';
+export { NEON_RANGE, PALETTE, GRADIENTS, GRADIENT_STOPS, DIRECTIONS, paletteOf, gradientStops, gradientPaint } from './palette.js';
+export { wideScript, lightsPerBox, textGrid, wrapLines, textSpec, measureWith, fitWidth } from './layout.js';
+export { HOVER, hoverLevelOf, createHoverGate } from './hover.js';
+export { NEON_WORDS, NEON_HEX, CSS_NAMES, isNeonKey, neonKey, parseColour, toSettleColour } from './colour.js';
 export { fitBox, luminance, luminances, coverages, thresholdBits, ditherBits, sampleLights, sampleCoverage, sourcePaint, litCount, parseViewBox, svgKind } from './raster.js';
 export { createHeat, tauFor, breathOf, breathDelay } from './heat.js';
+export { TRANSITION, SEQUENCE, transitionOf, morphHow, intervalFor, sequenceAt, createSequencer } from './transition.js';
+export { HEADING, headingLevel, headingCss, headingFontPx, headingSize, headingPitch, headingLights, headingElement, headingText } from './heading.js';

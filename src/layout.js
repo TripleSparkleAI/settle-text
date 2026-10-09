@@ -8,13 +8,15 @@
 // textGrid({ text, size, pitch, width, lines, margin }) - the grid: pitch P, box LH, line step LS, margins, cols x
 //                                rows, the inner width, the CSS size and the glyph's font size in lights
 // measureWith(ctx)             - a ratio function (text -> width / font size) over a canvas 2d context
+// fitWidth(text, { ratio, size, pitch, margin }) - the CSS width of a one-line text: the narrowest box whose grid
+//                                draws the words at their full size (textSpec shrinks a line that does not fit)
 // wrapLines(text, { ratio, spaceRatio, fontPx, maxW }) - the text broken at spaces, and after a hyphen inside a
 //                                word, into lines that fit maxW; a piece wider than a line stands alone
 // textSpec(text, { grid, lines, align, font, weight, scale, dx, dy }) - the settle-see target spec: a draw function
 //                                that writes the lines into the grid, all at ONE font size, the largest that fits
 //
 // ** Technical Review **
-// - THE GRID is the SETTLE site's (sites/settle-site/src/settleText.js, lanes CTPSETTLE and SETTLEHEADINGLIVE),
+// - THE GRID is the SETTLE site's (SETTLE/settle-site/src/settleText.js, lanes CTPSETTLE and SETTLEHEADINGLIVE),
 //   restated for a package: the letter box is `size * boxPerEm` CSS px tall and LH lights tall, so the pitch is the
 //   box over LH. The grid spans the container's width (cols = width / P) plus a margin of lights on every side. A
 //   wrapped text takes one line step (0.85 of the box) per extra line.
@@ -59,6 +61,16 @@ export function measureWith(ctx, font, weight = TEXT.weight) {
     ctx.font = `${weight} 100px ${font}`;
     return ctx.measureText(t).width / 100;
   };
+}
+
+// the narrowest width (CSS px) at which one line of `text` is drawn at its full size: textSpec draws the line at
+// round(LH * glyph) lights and shrinks it while it is wider than 0.98 of the inner width, so the grid needs that many
+// lights across plus the margins; half a light more keeps floor(width / P) from dropping a column
+export function fitWidth(text = '', { ratio = 0.62 * String(text).length, size = 64, pitch = 3.2, margin = TEXT.margin } = {}) {
+  const g = textGrid({ text, size, pitch, width: 0, margin });
+  const glyph = g.wide ? TEXT.wide.glyph : TEXT.glyph;
+  const lights = Math.ceil((Math.max(0, ratio) * Math.round(g.LH * glyph)) / 0.98) + 2 * g.MX;
+  return Math.ceil((lights + 0.5) * g.P);
 }
 
 export function wrapLines(text = '', { ratio = (w) => 0.62 * w.length, fontPx = 10, maxW = Infinity, spaceRatio = null } = {}) {

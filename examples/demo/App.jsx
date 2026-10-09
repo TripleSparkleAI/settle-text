@@ -7,6 +7,9 @@ import NeonSign from '../NeonSign.jsx';
 import LogoFromSvg, { LogoFromPath } from '../LogoFromSvg.jsx';
 import PhotoAsLights, { DrawingAsLights } from '../PhotoAsLights.jsx';
 import PageBackground, { LivePhotoBackground } from '../PageBackground.jsx';
+import ChangingWords, { Greetings, Countdown } from '../ChangingWords.jsx';
+import Headings, { ChangingHeading } from '../Headings.jsx';
+import LinksThatSettle, { HoverButton } from '../LinksThatSettle.jsx';
 
 const Code = ({ children }) => <pre>{children.trim()}</pre>;
 
@@ -42,6 +45,31 @@ export default function App() {
       <Code>{`
 <SettleText text="Render text as light" font='"Space Grotesk", sans-serif' size={72} color="#ff2fa0" />`}</Code>
 
+      <h2>Headings, h1 to h6</h2>
+      <p className="note">Each is a real heading element, named by its words; the level sets the element and the size, and the lights follow the size.</p>
+      <Headings />
+      <Code>{`
+<SettleHeading level={1} text="Render text as light" font={FACE} />
+<SettleHeading level={2} font={FACE}>Getting started</SettleHeading>
+<SettleHeading level={3} font={FACE} color="cyan">Changing the words</SettleHeading>`}</Code>
+      <ChangingHeading />
+
+      <h2>Links that re-settle</h2>
+      <p className="note">Point at a link, or Tab to it: its lights take a little heat and settle back. Each is as wide as its words.</p>
+      <LinksThatSettle />
+      <div style={{ marginTop: 16 }}><HoverButton /></div>
+      <Code>{`
+<SettleLink href="/docs" text="Docs" font={FACE} />
+<button><SettleText text="Point at me" width="fit" size={28} hover /></button>`}</Code>
+
+      <h2>Changing words</h2>
+      <ChangingWords />
+      <Greetings />
+      <Countdown />
+      <Code>{`
+<SettleText text={playing ? 'PAUSE' : 'PLAY'} width={240} wrap={false} duration={900} />
+<SettleSequence items={['HELLO', 'BONJOUR', 'HALLO', 'CIAO', 'HOLA']} interval={2200} width={360} align="center" />`}</Code>
+
       <h2>Your font, your words</h2>
       <p className="note">Type anything. The words are measured in the face you name, wrapped to the box, and settled.</p>
       <Playground />
@@ -49,7 +77,7 @@ export default function App() {
       <h2>A neon sign</h2>
       <NeonSign />
       <Code>{`
-<SettleText text="OPEN ALL NIGHT" font="Georgia, serif" weight={400} size={56} color="cyan" glow={1.4} temperature={0.7} breathe={4} align="center" background="#07060a" />`}</Code>
+<SettleText text="OPEN ALL NIGHT" font="Georgia, serif" weight={400} size={56} color="cyan" glow={1.4} temperature={0.75} resettle={4000} align="center" background="#07060a" />`}</Code>
 
       <h2>A logo from an SVG</h2>
       <div className="row">
@@ -80,7 +108,7 @@ export default function App() {
 </SettleBackground>`}</Code>
       <LivePhotoBackground>
         <h3 style={{ margin: 0, fontSize: 28 }}>A live one.</h3>
-        <p style={{ opacity: 0.8 }}>still={'{false}'} and breathe={'{6}'}: the lights re-settle every six seconds or so.</p>
+        <p style={{ opacity: 0.8 }}>resettle={'{6000}'}: alive, as every component is, and the lights settle again every six seconds or so.</p>
       </LivePhotoBackground>
 
       <h2>The resolution ladder, with the cost</h2>
@@ -90,11 +118,11 @@ export default function App() {
       </p>
       {LADDER.map((r) => (
         <div key={r} data-ladder={r} style={{ margin: '8px 0' }}>
-          <SettleText text={`${r} resolution: the quick brown fox`} font='"Space Grotesk", sans-serif' size={64} resolution={r} still={still} breathe={false} label={`${r} resolution`} onHandle={(h) => ((globalThis.__ladder ??= {})[r] = h)} />
+          <SettleText text={`${r} resolution: the quick brown fox`} font='"Space Grotesk", sans-serif' size={64} resolution={r} still={still} resettle={false} label={`${r} resolution`} onHandle={(h) => ((globalThis.__ladder ??= {})[r] = h)} />
         </div>
       ))}
       <div data-ladder="image">
-        <SettleImage src="/hero-hot.jpg" alt="" resolution="medium" dither colors="source" still={still} breathe={false} width={480} onHandle={(h) => ((globalThis.__ladder ??= {}).image = h)} />
+        <SettleImage src="/hero-hot.jpg" alt="" resolution="medium" dither colors="source" still={still} width={480} resettle={false} onHandle={(h) => ((globalThis.__ladder ??= {}).image = h)} />
       </div>
       <Perf />
     </>

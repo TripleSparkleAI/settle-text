@@ -11,8 +11,8 @@ export default function NeonSign() {
       size={56}
       color="cyan"
       glow={1.4}
-      temperature={0.7}
-      breathe={4}
+      temperature={0.75}
+      resettle={4000}
       align="center"
       background="#07060a"
       style={{ padding: '24px 0' }}

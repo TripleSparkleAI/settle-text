@@ -1,0 +1,2 @@
+# a built demo is an artifact of `run.sh --build`, never part of the package
+dist/

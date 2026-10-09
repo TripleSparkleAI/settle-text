@@ -3,6 +3,7 @@
 // <claudes_code_comments>
 // ** Function List **
 // NEON_WORDS         - the ten neon colour words -> settle-see's neon keys (rose -> yes, cyan -> pull, ...)
+// NEON_HEX           - two more neon words with no settle-see key: pink (the HYPER PINK) and green (LASER GREEN)
 // CSS_NAMES          - a small table of CSS colour names (black, white, the primaries, the greys and a few more)
 // isNeonKey(word)    - true for a settle-see neon key or one of the colour words above
 // neonKey(word)      - the settle-see key for a colour word ('rose' -> 'yes'), or the word itself when it is a key
@@ -31,6 +32,9 @@ export const NEON_WORDS = {
   red: 'miss',
 };
 const NEON_KEYS = new Set(Object.values(NEON_WORDS));
+// two neon words with no settle-see key (0.4.0): the SETTLE site's HYPER PINK and settle-text's LASER GREEN. They win
+// over CSS's own pink and green, which are pale and dark, because this is a library of neons
+export const NEON_HEX = { pink: '#ff2fa0', green: '#30ff46' };
 
 export const CSS_NAMES = {
   black: '#000000',
@@ -61,7 +65,7 @@ export const CSS_NAMES = {
   ivory: '#fffff0',
 };
 
-export const isNeonKey = (w) => typeof w === 'string' && (NEON_KEYS.has(w) || w in NEON_WORDS);
+export const isNeonKey = (w) => typeof w === 'string' && (NEON_KEYS.has(w) || w in NEON_WORDS || w in NEON_HEX);
 export const neonKey = (w) => (typeof w === 'string' && w in NEON_WORDS ? NEON_WORDS[w] : w);
 
 const hex2 = (n) => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, '0');
@@ -81,6 +85,7 @@ export function parseColour(css) {
 }
 
 export function toSettleColour(css) {
+  if (typeof css === 'string' && css in NEON_HEX) return NEON_HEX[css];
   if (isNeonKey(css)) return neonKey(css);
   return parseColour(css);
 }
