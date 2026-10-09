@@ -12,9 +12,8 @@ records the most recent run; replace it on the next one.
 - [ ] `package-lock.json` carries the same version twice (top and `packages[""]`).
 - [ ] `files` lists only folders and files that exist; `npm pack --dry-run` shows no `dist/`, no `node_modules/`,
       no `.env`, nothing from the SETTLE site.
-- [ ] **The licence.** No `license` field until one is chosen. **OPEN: the licence is the navigator's choice**
-      (settle-see declares none; MIT would match settle-mcp and the upstream ds4 engine). The README's Licence
-      section carries the placeholder; remove it in the same change that adds the field and a `LICENSE` file.
+- [x] **The licence.** MIT (the navigator, 2026-10-09): `"license": "MIT"` in `package.json`, the text in `LICENSE`,
+      and the README's Licence section says so.
 
 ## 2. The tests
 
@@ -53,7 +52,7 @@ records the most recent run; replace it on the next one.
       `github:triplesparkle/settle-see`, and it carries no lock.
 - [ ] In a scratch copy of that export, point `settle-see` at the exported `../settle-see` and run
       `npm install && npm test`: the suite passes outside this repository.
-- [ ] Pushing (`--push`) is a separate decision; the repositories are private.
+- [ ] Pushing (`--push`) is a separate decision. The repositories go public at launch (`SETTLE/launch.sh`'s public step).
 
 ## The last run: 0.3.0, 2026-10-05
 
@@ -68,4 +67,4 @@ records the most recent run; replace it on the next one.
 | standalone export | settle-text: scan clean (0 secret, 0 dev-only hits), depends on `github:triplesparkle/settle-see`, no lock; outside the repository `npm install && npm test` 62 of 62 (before hover and SettleLink) and the demo builds with settle-see from `node_modules` |
 | settle-see export | STOPPED by the export's own scan: one unreviewed dev-only hit, the English word "arrival" in a comment in `src/radialeffects.js`; a false positive for the export script's owner to review |
 
-**Open, for the navigator:** the licence (section 1). Nothing else blocks a release.
+**Open, for the navigator:** nothing. The licence was ruled MIT on 2026-10-09 (section 1).

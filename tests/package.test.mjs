@@ -114,10 +114,13 @@ test('every example file is in the demo, and every recipe in docs/RECIPES.md nam
   assert.equal(words[count.toLowerCase()], named.length, 'the recipe count in the first line is the real count');
 });
 
-test('the licence question is open and said so: no license field, a placeholder in the README and the checklist', () => {
-  assert.equal(pkg.license, undefined, 'no licence is chosen (settle-see declares none); the choice is the navigator\'s');
-  assert.match(read('README.md'), /PLACEHOLDER \(not decided yet\):\*\* the licence/);
-  assert.match(read('RELEASE_CHECKLIST.md'), /licence/i);
+// THE LICENCE (the navigator, 2026-10-09: MIT for all): the field, the file and the README agree, and no placeholder is left
+test('the licence is MIT: the package.json field, the LICENSE file and the README say so, and no placeholder is left', () => {
+  assert.equal(pkg.license, 'MIT');
+  assert.match(read('LICENSE'), /^MIT License\n\nCopyright \(c\) 2026 /);
+  assert.match(read('README.md'), /## Licence\n\nMIT\./);
+  assert.doesNotMatch(read('README.md'), /PLACEHOLDER/);
+  assert.doesNotMatch(read('RELEASE_CHECKLIST.md'), /OPEN: the licence/);
 });
 
 test('the package version, the CHANGELOG\'s top entry and the lock agree', () => {

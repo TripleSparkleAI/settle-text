@@ -23,9 +23,8 @@ scatters a little and settles back into the same words. No theory needed. Pass `
 npm install github:triplesparkle/settle-text
 ```
 
-That installs it from its repository, `github.com/triplesparkle/settle-text`, and settle-see from its own. Both
-repositories are private for now, so the install needs access until they are made public. Nothing is on the npm
-registry (PUBLISHING.md). To run its tests, clone it: `git clone https://github.com/triplesparkle/settle-text`,
+That installs it from its public repository, `github.com/triplesparkle/settle-text`, and settle-see from its own.
+Nothing is on the npm registry (PUBLISHING.md). To run its tests, clone it: `git clone https://github.com/triplesparkle/settle-text`,
 `cd settle-text`, `npm install && npm test`.
 
 ```jsx
@@ -465,8 +464,8 @@ settle-see's own meter summed over the settle-text settles on the page (physics 
 The busiest screen at 1440 (the recipes: a neon sign, changing words, six hover tiles) costs 106 ms of CPU a second
 alive. The page thins itself by a weighted crowd: in a run taken before the weighting (load 31 falling to 3), a screen
 of prose paragraphs read 133 ms a second; in the two runs after it (load 16 falling to 6, then 2.9) it read 81. The whole renderer, everything the page does (its background, its footer,
-the settles), read 206 to 281 ms a second alive against 157 to 263 resting. The table, the stamps, every round and
-the tool: `SETTLE/runs/stxalive/` in the SETTLE repository (`measure.py`).
+the settles), read 206 to 281 ms a second alive against 157 to 263 resting. The rounds and the script that took
+them are kept with the SETTLE site, not in this package; the table above is their summary.
 
 **Per preset, the live phase (0.3.0's table).** Measured 2026-10-03 14:54 AEST on an Apple M5 Max (macOS 26.5, high power mode, load 8.15 on 18 cores during
 the run, so other work was present), headless Chromium through Playwright, the demo's 960 px column, a 64 px line
@@ -483,10 +482,10 @@ picture, per frame; the last column multiplies by 24 fps.
 Two things the table shows. The physics is cheap at every preset (a Gibbs sweep over 36,480 lights is 0.17 ms);
 the draw is where the time goes, and it is a few milliseconds at most. And the draw cost does not climb with the
 preset here, because the renderer writes one pixel per light and lets the GPU scale it, so a 1 to 2 ms draw is
-mostly fixed compositing cost. Treat the numbers as a ceiling for the live phase: once settled the picture rests
-and costs nothing, and the live phase lasts about `settleTime` after a mount or a breath.
+mostly fixed compositing cost. Treat the numbers as a ceiling for one frame. In 0.3.0 a settled picture rested and
+cost nothing between breaths; since 0.4.0 it keeps simmering, and the alive table above prices that.
 
-**Still mode** (`still`, the default for a background): after the flip, every settle on the ladder drew **0
+**Still mode** (`still`): after the flip, every settle on the ladder drew **0
 frames in 5 seconds**. The whole cost is the one draw.
 
 Re-checked 2026-10-05 13:05 AEDT on the same machine, but in low power mode with a load of 265 on 18 cores (the
@@ -509,19 +508,14 @@ most a few times a second and never flashes the whole picture (WCAG 2.3.1).
 
 ## Licence
 
-No licence is chosen yet. settle-see, the engine this package wraps, declares none either, so this package follows it
-and `package.json` carries no `license` field. Until one is chosen, nothing here grants a licence to use, copy or
-change the code.
-
-> **PLACEHOLDER (not decided yet):** the licence for settle-text and settle-see. MIT would match settle-mcp
-> and the upstream ds4 engine this project rests on. `PUBLISHING.md` and `RELEASE_CHECKLIST.md` list it as open.
+MIT. The text is in `LICENSE`, and `package.json` says `"license": "MIT"`. settle-see, the engine this package wraps,
+carries the same licence, as do settle-mcp, SETTLE and KANERVA.
 
 ## Naming
 
 The package is **settle-text**: the thing it does is render text (and pictures) as a settle. The other name
 considered was **settle-sdm-text**. The effect is a settle of p-bits (lights with coins, leans and pulls); it
-does not use a sparse distributed memory, so "sdm" in the name would promise a mechanism that is not here. If the
-navigator prefers the longer name anyway, it is one line in `package.json` and the site's aliases.
+does not use a sparse distributed memory, so "sdm" in the name would promise a mechanism that is not here.
 
 ## Tests
 
@@ -553,5 +547,5 @@ settle-text/
 ```
 
 The engine is settle-see, wrapped and never forked: its own repository is `github.com/triplesparkle/settle-see`
-(private for now), and in the SETTLE research repository it is the sibling folder `../settle-see`, a `file:`
+(public), and in the SETTLE research repository it is the sibling folder `../settle-see`, a `file:`
 dependency that the export turns into `github:triplesparkle/settle-see`.

@@ -22,9 +22,8 @@ would take, so the day it is wanted the work is a list and not a discovery.
    this package under `vendor/` and rewrite its three imports: `react/Lights.jsx`, `react/picture.js` and
    `react/SettleText.jsx`; `tests/colour.test.mjs` imports it too). A peer dependency would be wrong: a consumer should
    not have to know the engine exists.
-2. **A licence.** settle-see declares none (no `license` field, no LICENSE file) and settle-rs has none either;
-   settle-mcp is MIT. This package follows settle-see today and declares none. A published package needs one, and
-   the choice is the navigator's; MIT would match settle-mcp and the upstream ds4 engine this project rests on.
+2. **A licence.** DONE: MIT (the navigator, 2026-10-09). `LICENSE` holds the text and `package.json` says
+   `"license": "MIT"`; settle-see, settle-mcp, SETTLE and KANERVA carry the same licence.
 3. **A build.** The sources are plain ES modules and JSX. Consumers' bundlers handle JSX only when told to, so a
    published package ships compiled JavaScript: `react/*.jsx` through esbuild or Babel into `dist/react/`, with
    `exports` pointing at `dist/`. Keep the source in `files` too, for source maps and for readers.
